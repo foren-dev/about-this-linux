@@ -48,7 +48,7 @@ func drawCanvas() {
 // Initializing all the widgets/strings
 func initWidgets() {
 	getUserInfo()
-	aboutThisLinux = canvas.NewText("About This Linux:", color.White)
+	aboutThisLinux = canvas.NewText("About This Linux", color.White)
 	hostName = canvas.NewText("Username: "+name, color.White)
 	kernel = canvas.NewText("Kernel: "+kernelName, color.White)
 	cpu = canvas.NewText("CPU: "+cpuModel, color.White)
@@ -56,7 +56,8 @@ func initWidgets() {
 	aboutThisLinux.TextSize = 22
 	aboutThisLinux.TextStyle = fyne.TextStyle{Bold: true}
 
-	content := container.New(layout.NewVBoxLayout(), aboutThisLinux, widget.NewSeparator(), hostName, kernel, cpu)
+	header := container.New(layout.NewCenterLayout(), aboutThisLinux)
+	content := container.New(layout.NewVBoxLayout(), header, widget.NewSeparator(), hostName, kernel, cpu)
 	window.SetContent(content)
 }
 
