@@ -25,7 +25,7 @@ var cpu *canvas.Text
 var title = "About This Linux"
 var a = app.New()
 var window fyne.Window
-var name, _ = linux.MachineID()
+var name string
 var kernelName, _ = linux.KernelVersion()
 var cpuModel = cpuid.CPU.BrandName
 
