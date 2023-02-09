@@ -7,5 +7,4 @@ About this linux is a small menu made in go to be part of hybrid macbar
 1) git clone https://github.com/alexstr-dev/about-this-linux
 2) cd about-this-linux
 3) go build
-4) chmod +x about-this-linux-v2
-5) ./about-this-linux-v2
+4) ./about-this-linux-v2
