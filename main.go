@@ -35,6 +35,17 @@ func main() {
 	drawCanvas()
 }
 
+// Drawing the entire about this linux menu
+func drawCanvas() {
+	window = a.NewWindow(title)
+	window.SetFixedSize(true)
+	window.Resize(canvasSize)
+	a.Settings().SetTheme(&CustomTheme{})
+	initWidgets()
+	window.ShowAndRun()
+}
+
+// Initializing all the widgets/strings
 func initWidgets() {
 	getUserInfo()
 	aboutThisLinux = canvas.NewText("About This Linux:", color.White)
@@ -49,15 +60,7 @@ func initWidgets() {
 	window.SetContent(content)
 }
 
-func drawCanvas() {
-	window = a.NewWindow(title)
-	window.SetFixedSize(true)
-	window.Resize(canvasSize)
-	a.Settings().SetTheme(&CustomTheme{})
-	initWidgets()
-	window.ShowAndRun()
-}
-
+// Gets username on linux since the other way decided it wanted to place a stupid character
 func getUserInfo() {
 	username, err := user.Current()
 	if err != nil {
@@ -67,6 +70,7 @@ func getUserInfo() {
 	name = username.Username
 }
 
+// CustomTheme Struct for the custom theme
 type CustomTheme struct {
 }
 
