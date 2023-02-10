@@ -49,12 +49,12 @@ func drawCanvas() {
 func initWidgets() {
 	getUserInfo()
 	aboutThisLinux = canvas.NewText("About This Linux", color.White)
-	hostName = canvas.NewText("Username: "+name, color.White)
-	kernel = canvas.NewText("Kernel: "+kernelName, color.White)
-	cpu = canvas.NewText("CPU: "+cpuModel, color.White)
+	hostName = canvas.NewText("Username: " + name, color.White)
+	kernel = canvas.NewText("Kernel: " + kernelName, color.White)
+	cpu = canvas.NewText("CPU: " + cpuModel, color.White)
 
 	aboutThisLinux.TextSize = 22
-	aboutThisLinux.TextStyle = fyne.TextStyle{Bold: true}
+	aboutThisLinux.TextStyle = fyne.TextStyle { Bold: true }
 
 	header := container.New(layout.NewCenterLayout(), aboutThisLinux)
 	content := container.New(layout.NewVBoxLayout(), header, widget.NewSeparator(), hostName, kernel, cpu)
@@ -65,9 +65,11 @@ func initWidgets() {
 func getUserInfo() {
 	username, err := user.Current()
 	if err != nil {
+		// Error
 		fmt.Println("Failed to get username!", err)
-		os.Exit(1)
+		os.Exit(-1)
 	}
+
 	name = username.Username
 }
 
@@ -76,7 +78,7 @@ type CustomTheme struct {
 }
 
 func (c CustomTheme) Color(fyne.ThemeColorName, fyne.ThemeVariant) color.Color {
-	return color.RGBA{R: 25, G: 25, B: 25, A: 15}
+	return color.RGBA { R: 25, G: 25, B: 25, A: 15 }
 }
 
 func (c CustomTheme) Font(style fyne.TextStyle) fyne.Resource {
