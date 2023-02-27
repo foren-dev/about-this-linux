@@ -5,8 +5,6 @@ use eframe::{
 use lxinfo::info;
 
 fn main() -> Result<(), eframe::Error> {
-    //    let info = info::get_system_information().expect("You did something wong");
-    //    println!("{}", info.kernel);
     let options = eframe::NativeOptions {
         initial_window_size: Some(egui::vec2(340., 206.)),
         resizable: false,
@@ -92,7 +90,7 @@ fn create_label(ui: &mut Ui, text: RichText, space: f32) {
 impl Default for Info {
     fn default() -> Self {
         Self {
-            system_info: info::get_system_information().expect("You did something wong"),
+            system_info: info::get_system_information().expect("You did sum ting wong"),
         }
     }
 }
