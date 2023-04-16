@@ -12,7 +12,7 @@ const SPACING: f32 = 9.;
 
 fn main() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {
-        initial_window_size: Some(egui::vec2(340., 222.)),
+        initial_window_size: Some(egui::vec2(340., 254.)),
         resizable: false,
         default_theme: eframe::Theme::Dark,
         ..Default::default()
