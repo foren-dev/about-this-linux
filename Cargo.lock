@@ -1163,8 +1163,9 @@ dependencies = [
 
 [[package]]
 name = "lxinfo"
-version = "0.1.1"
-source = "git+https://github.com/vars1ty/lxinfo.git#5f5638377e96ef17cea04095ab8799037bebbbe5"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "efee7e5570518c86be0777caf63a7b1231061c155458130b5fc0e7a2ca35cd95"
 dependencies = [
  "byte-unit",
  "libc",
