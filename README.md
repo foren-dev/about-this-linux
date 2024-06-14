@@ -3,7 +3,7 @@ About This Linux V3 is a small menu made in rust to be part of hybrid macbar, bu
 
 Disclaimer: Hybrid-Bar is no longer maintained, so dont expect any support regarding that.
 
-![image](https://user-images.githubusercontent.com/96570719/221499361-50b939c0-24e6-4920-ae98-4cc79fce06ce.png)
+![image](https://github.com/alexstr-dev/about-this-linux/assets/96570719/96c92d8c-c142-4bbf-a492-7e8e01b8154d)
 
 Disclaimer: MUST have cpuid AND ripgrep installed or info will be missing
 
@@ -12,4 +12,4 @@ Disclaimer: MUST have cpuid AND ripgrep installed or info will be missing
 2) cd about-this-linux
 3) cargo build -r
 4) target/release/about-this-linux
-5) (Optional) Add an alias using "alias -s <name> "<the location your buils file is located>"
+5) (Optional) Add an alias using `alias -s [name] "[the location your buils file is located]"`
