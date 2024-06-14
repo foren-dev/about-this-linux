@@ -1,107 +1,98 @@
 mod utils;
 
-use eframe::{
-    egui::{self, RichText},
-    epaint::Color32,
-};
+use gtk::{prelude::*, Box, CssProvider, Label, StyleContext, Window, WindowType};
 use lxinfo::info;
 use utils::CommandUtils;
 
-const FONT_SIZE: f32 = 13.;
-const SPACING: f32 = 9.;
+static mut LABELS: Vec<Label> = Vec::new();
 
-fn main() -> Result<(), eframe::Error> {
-    let options = eframe::NativeOptions {
-        initial_window_size: Some(egui::vec2(340., 254.)),
-        resizable: false,
-        default_theme: eframe::Theme::Dark,
-        ..Default::default()
-    };
-    eframe::run_native(
-        "About This Linux",
-        options,
-        Box::new(|_cc| Box::<Info>::default()),
-    )
+fn main() {
+    gtk::init()
+        .expect("Unable to initialize About This Linux. Try again later... or maybe dont...");
+    let box_vert = Box::new(gtk::Orientation::Vertical, 0);
+    let window = Window::new(WindowType::Popup);
+    window.set_title("About This Linux V3");
+    window.set_default_size(300, 242);
+    window.set_resizable(false);
+    window.connect_delete_event(|_, _| {
+        gtk::main_quit();
+        Inhibit(false)
+    });
+    load_css(&window);
+    create_labels();
+    add_labels(&box_vert);
+    window.add(&box_vert);
+    window.show_all();
+    gtk::main();
 }
 
-impl eframe::App for Info {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        let packages = CommandUtils::get_command_output("pacman -Q | wc -l");
-        let username = &self.system_info.username;
-        let hostname = &self.system_info.hostname;
-        let distro = &self.system_info.distro_name;
-        let kernel = &self.system_info.kernel;
-        let shell = &self.system_info.shell;
-        let uptime = &self.system_info.uptime_formatted;
-        let used_mem = &self.system_info.used_mem;
-        let total_mem = &self.system_info.total_mem;
-        let wm = std::env::var("XDG_CURRENT_DESKTOP").expect("Failed to get WM!");
-        egui::CentralPanel::default().show(ctx, |ui| {
-            ui.vertical_centered(|centered| {
-                centered.heading(
-                    RichText::new("About This Linux v3.0")
-                        .color(Color32::WHITE)
-                        .underline(),
-                );
-            });
-            CommandUtils::create_label(
-                ui,
-                &format!("{username}@{hostname}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-            CommandUtils::create_label(
-                ui,
-                &format!("Distro: {distro}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-            CommandUtils::create_label(
-                ui,
-                &format!("WM: {wm}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-            CommandUtils::create_label(
-                ui,
-                &format!("Kernel: {kernel}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-            CommandUtils::create_label(
-                ui,
-                &format!("Shell: {shell}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-            CommandUtils::create_label(
-                ui,
-                &format!("Packages: {packages}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-            CommandUtils::create_label(
-                ui,
-                &format!("Uptime: {uptime}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-            CommandUtils::create_label(
-                ui,
-                &format!("Memory: {used_mem}/{total_mem}"),
-                Color32::WHITE,
-                FONT_SIZE,
-                SPACING,
-            );
-        });
+/// We are creating a label, then pushing it to our array which will then get added in another function
+fn create_label(text: &str) {
+    let label = Label::new(Some(text));
+    unsafe { LABELS.push(label) }
+}
+
+/// Adding the labels to the window through unsafe code because it was much cleaner than the alternative
+fn add_labels(box_vert: &Box) {
+    let box_title = Box::new(gtk::Orientation::Horizontal, 6);
+    let title = Label::new(Some(""));
+    title.set_markup("<u>About This Linux V3</u>");
+    box_title.pack_start(&title, true, true, 0);
+    unsafe {
+        for label in LABELS.iter_mut() {
+            let box_hor = Box::new(gtk::Orientation::Horizontal, 0);
+            box_hor.pack_start(label, false, false, 6);
+            box_vert.pack_start(&box_title, false, false, 6);
+            box_vert.pack_start(&box_hor, false, false, 2);
+        }
     }
+}
+
+/// We're using css styling to allow for transparency, which can have blur if youre on hyprland
+fn load_css(window: &Window) {
+    let css_provider = CssProvider::new();
+    css_provider
+        .load_from_data(
+            b"
+            window{
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+        ",
+        )
+        .expect("Couldnt load CSS, please check your shit");
+    let screen = window.get_screen().expect("Couldnt get screen");
+    StyleContext::add_provider_for_screen(
+        &screen,
+        &css_provider,
+        gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+    );
+}
+
+/// Creating the labels in a separate function to cut down on the amount of code in our main function
+fn create_labels() {
+    let info = Info::default().system_info;
+    create_label(&format!("{}@{}", info.username, info.hostname));
+    create_label(&format!("Distro: {}", info.distro_name));
+    create_label(&format!(
+        "WM: {}",
+        &std::env::var("XDG_CURRENT_DESKTOP").expect("Failed to get WM!")
+    ));
+    create_label(&format!("Shell: {}", info.shell));
+    create_label(&format!("Kernel: {}", info.kernel));
+    create_label(&format!("Uptime: {}", info.uptime_formatted));
+    create_label(&format!(
+        "Packages: {} (Pacman), {} (Flatpak)",
+        CommandUtils::get_command_output("pacman -Q | wc -l"),
+        CommandUtils::get_command_output("flatpak list | wc -l")
+    ));
+    create_label(&format!(
+        "CPU: {}",
+        CommandUtils::get_command_output("cpuid -1 | rg \'brand =\' | cut -d \'\"\' -f2")
+    ));
+    create_label(&format!(
+        "GPU: {}",
+        CommandUtils::get_command_output("lspci | rg \"VGA\" | cut -d'[' -f2 | cut -d']' -f1")
+    ));
 }
 
 /// Implement to give system_info a default value
@@ -114,5 +105,5 @@ impl Default for Info {
 }
 
 struct Info {
-    system_info: info::SystemInfo,
+    pub(crate) system_info: info::SystemInfo,
 }
